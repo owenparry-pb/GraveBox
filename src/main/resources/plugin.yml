@@ -1,0 +1,6 @@
+name: GraveBox
+version: 1.0
+main: me.bebo.graveBox.GraveBox
+api-version: 1.21
+author: Bebo
+description: A plugin that creates a chest on player death.
