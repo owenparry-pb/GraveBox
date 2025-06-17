@@ -173,7 +173,7 @@ MIT License - Free for use and modification
 
 ## 📌 Version Information
 - Current Version: 2.0
-- Minecraft Version: 1.21
+- Minecraft Version: 1.17
 - API Version: Paper 1.21-R0.1-SNAPSHOT
 - Java Version: 17+
 
