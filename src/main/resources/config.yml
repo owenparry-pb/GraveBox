@@ -1,0 +1,117 @@
+# =================================================================== #
+#                       GraveBox Configuration                        #
+#             Thank you for using GraveBox by Bebo!                 #
+# =================================================================== #
+
+# Grave Settings
+# Configure the appearance, size, and behavior of graves.
+grave:
+  # Material to use for graves. Use standard Bukkit Material names.
+  # Common options: CHEST, BARREL, SHULKER_BOX, ENDER_CHEST
+  material: "CHEST"
+
+  # Size of the grave inventory.
+  # This setting determines the number of slots in the grave.
+  # Options:
+  # - "SMALL": 9 slots (one row)
+  # - "MEDIUM": 18 slots (two rows)
+  # - "LARGE": 27 slots (standard single chest/barrel/shulker)
+  # - "EXTRA_LARGE": 54 slots (standard double chest)
+  #
+  # IMPORTANT NOTE FOR 'EXTRA_LARGE':
+  # - If 'material' is CHEST, the plugin will try to place a DOUBLE CHEST.
+  #   This requires an empty air block next to the death location.
+  # - If no space is available, it will fall back to a single 27-slot chest.
+  # - Other materials (like BARREL) cannot be 54 slots and will be capped at 27.
+  size: "EXTRA_LARGE"
+
+  # Protection settings
+  # ---
+  # Prevents graves from being destroyed by TNT, creepers, etc.
+  explosion-protection: true
+  # If true, graves cannot be broken by players unless they have the 'gravebox.bypass' permission.
+  indestructible: true
+
+  # Behavior settings
+  # ---
+  # If true, the grave block will be removed automatically when the owner empties it.
+  auto-remove: true
+  # If 'indestructible' is false, this controls what happens when a grave is broken.
+  # true: Items inside will drop on the ground.
+  # false: Items will be deleted forever.
+  drop-items-on-destroy: false
+
+  # Appearance
+  # ---
+  # Set a custom name for the grave container.
+  # Use '&' for color codes. Example: "&6" for gold.
+  # Placeholders: {player}
+  custom-name: "&6{player}'s Grave"
+
+# Messages
+# Customize all plugin messages. Use '&' for color codes.
+messages:
+  # Sent to the player when their grave is created.
+  # Placeholders: {x}, {y}, {z}, {world}
+  grave-created: "&aYour items are safe in a grave at &e{x}, {y}, {z}&a in world &e{world}&a."
+
+  # Sent when a player tries to open a grave that isn't theirs.
+  not-your-grave: "&cThis is not your grave!"
+
+  # Sent when a player tries to break an indestructible grave.
+  cannot-destroy: "&cThis grave is indestructible!"
+
+  # Sent to the player when they empty their grave and it is removed.
+  grave-emptied: "&aYou retrieved all items from your grave. It has now vanished."
+
+  # Sent if some items didn't fit and were dropped on the ground.
+  grave-full: "&cYour grave was too small to hold all your items! Some were dropped nearby."
+
+  # The message format for the /gravestats command.
+  stats-message: "&6Your death count: &a"
+
+# Discord Integration
+# Get notifications on a Discord server when players die.
+discord:
+  # Set to true to enable Discord notifications.
+  enabled: false
+
+  # Your Discord channel's webhook URL.
+  # IMPORTANT: Replace this with your actual webhook URL!
+  webhook-url: "https://discord.com/api/webhooks/your_webhook_here"
+
+  # The message sent to Discord.
+  # Placeholders: {player}, {x}, {y}, {z}, {world}
+  message: "**{player}** has died and a grave was created at `{x}, {y}, {z}` in `{world}`."
+
+  # The color of the Discord embed sidebar.
+  # Use a HEX color code without the '#'.
+  embed-color: "FF0000" # Red
+
+# Statistics System
+# Track player deaths in a local database.
+stats:
+  # Set to true to enable tracking player deaths.
+  enabled: true
+
+  # Database settings. For now, only SQLITE is supported.
+  database:
+    # Database type. Default: "SQLITE".
+    type: "SQLITE"
+
+    # Database filename (only for SQLITE).
+    file: "stats.db"
+
+# Advanced Settings
+# For users who want to fine-tune the plugin's behavior.
+advanced:
+  # Blacklist certain items from being stored in graves. They will be dropped on death as normal.
+  # Use standard Bukkit Material names: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  blacklisted-items:
+    - "BEDROCK"
+    - "BARRIER"
+    - "COMMAND_BLOCK"
+    - "CHAIN_COMMAND_BLOCK"
+    - "REPEATING_COMMAND_BLOCK"
+    - "STRUCTURE_BLOCK"
+    - "JIGSAW"
