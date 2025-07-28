@@ -1,6 +1,6 @@
 # GraveBox Plugin Metadata
 name: GraveBox
-version: 2.0 # This is replaced by Maven
+version: 2.1pp # This is replaced by Maven
 main: me.bebo.graveBox.GraveBox
 api-version: '1.21' # Set to the Minecraft version you are building against
 authors: [Bebo]

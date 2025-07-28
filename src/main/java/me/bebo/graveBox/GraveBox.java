@@ -24,6 +24,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.World;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,31 +133,16 @@ public final class GraveBox extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-public void onPlayerDeath(PlayerDeathEvent event) {
-    Player player = event.getEntity();
-    Location deathLocation = findSafeLocation(player.getLocation(), 5);
-    if (deathLocation == null) {
-        getLogger().warning("Could not place grave for " + player.getName() + ", no safe location found.");
-        return;
-    }
-    List<ItemStack> itemsToStore = new ArrayList<>();
-    for (ItemStack item : player.getInventory().getArmorContents()) if (isValidItem(item)) itemsToStore.add(item);
-    if (isValidItem(player.getInventory().getItemInOffHand())) itemsToStore.add(player.getInventory().getItemInOffHand());
-    for (ItemStack item : player.getInventory().getStorageContents()) if (isValidItem(item)) itemsToStore.add(item);
-    if (itemsToStore.isEmpty()) return;
-    UUID graveId = UUID.randomUUID();
-    Grave grave = new Grave(graveId, player.getUniqueId(), deathLocation);
-    saveGraveToFile(grave, itemsToStore);
-    graveLocations.put(deathLocation, grave);
-    deathLocation.getBlock().setType(graveMaterial);
-    updatePlayerStats(player);
-    sendGraveLocationMessage(player, deathLocation);
-    sendDiscordNotification(player, deathLocation);
-    event.getDrops().clear();
-    event.setKeepLevel(true);
-    event.setDroppedExp(0);
-    player.getInventory().clear();
-}
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        Location deathLocation = player.getLocation().getBlock().getLocation();
+
+        if (!deathLocation.getBlock().getType().isAir() && !deathLocation.getBlock().isLiquid()) {
+            deathLocation = deathLocation.add(0, 1, 0);
+            if (!deathLocation.getBlock().getType().isAir()) {
+                getLogger().warning("Could not place grave for " + player.getName() + " at " + deathLocation + ", location is obstructed. Items will drop normally.");
+                return;
+            }
         }
 
         List<ItemStack> itemsToStore = new ArrayList<>();
@@ -474,42 +460,41 @@ public void onPlayerDeath(PlayerDeathEvent event) {
         public Location getLocation() { return location; }
     }
 
-private Location findSafeLocation(Location center, int radius) {
-    World world = center.getWorld();
-    if (world == null) return null;
+    private Location findSafeLocation(Location center, int radius) {
+        World world = center.getWorld();
+        if (world == null) return null;
 
-    for (int dx = -radius; dx <= radius; dx++) {
-        for (int dy = -radius; dy <= radius; dy++) {
-            for (int dz = -radius; dz <= radius; dz++) {
-                Location potential = center.clone().add(dx, dy, dz);
-                if (isSafeLocation(potential)) {
-                    return potential;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    Location potential = center.clone().add(dx, dy, dz);
+                    if (isSafeLocation(potential)) {
+                        return potential;
+                    }
                 }
             }
         }
-    }
-    return null;
-}
-
-private boolean isSafeLocation(Location location) {
-    Block block = location.getBlock();
-    Material type = block.getType();
-
-    if (type.isAir() || type == Material.WATER || type == Material.LAVA) {
-        return false;
+        return null;
     }
 
-    Block below = location.clone().add(0, -1, 0).getBlock();
-    if (!below.getType().isSolid()) {
-        return false;
+    private boolean isSafeLocation(Location location) {
+        Block block = location.getBlock();
+        Material type = block.getType();
+
+        if (type.isAir() || type == Material.WATER || type == Material.LAVA) {
+            return false;
+        }
+
+        Block below = location.clone().add(0, -1, 0).getBlock();
+        if (!below.getType().isSolid()) {
+            return false;
+        }
+
+        Block above = location.clone().add(0, 1, 0).getBlock();
+        if (above.getType().isSolid()) {
+            return false;
+        }
+
+        return true;
     }
-
-    Block above = location.clone().add(0, 1, 0).getBlock();
-    if (above.getType().isSolid()) {
-        return false;
-    }
-
-    return true;
-}
-
 }
