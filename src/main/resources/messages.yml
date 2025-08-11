@@ -1,0 +1,16 @@
+messages:
+  tracking:
+    started: "&aGrave tracking compass given. Follow the arrow to find your grave!"
+    updated: "&7Distance updated: &f{0} &7blocks away"
+    arrived: "&aYou have arrived at your grave!"
+    too-far: "&cYou are {0} blocks away from your grave!"
+    stopped: "&6Grave tracking stopped"
+    not-found: "&cNo graves found to track"
+    disabled: "&cGrave tracking is disabled on this server"
+  commands:
+    tracking:
+      usage: "&cUsage: /gravetrack [stop]"
+      no-permission: "&cYou don't have permission to use grave tracking"
+  errors:
+    not-tracking: "&cYou are not tracking any graves"
+    invalid-grave: "&cInvalid grave - it may have been removed"
