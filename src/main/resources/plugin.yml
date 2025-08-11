@@ -3,9 +3,9 @@ name: GraveBox
 version: ${project.version} # This is replaced by Maven
 main: me.bebo.graveBox.GraveBox
 api-version: '1.21' # Set to the Minecraft version you are building against
-authors: [Bebo] [owenparry-pb]
+authors: [Bebo]
 description: Advanced grave protection system with Discord notifications and statistics
-website: https://github.com/owenparry-pb/GraveBox forked from  https://github.com/BeboNaiem/GraveBox
+website: https://github.com/owenparry-pb/GraveBox
 prefix: GraveBox
 
 # Plugin Commands
