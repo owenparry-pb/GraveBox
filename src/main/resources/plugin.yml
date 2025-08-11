@@ -3,13 +3,17 @@ name: GraveBox
 version: ${project.version} # This is replaced by Maven
 main: me.bebo.graveBox.GraveBox
 api-version: '1.21' # Set to the Minecraft version you are building against
-authors: [Bebo]
+authors: [Bebo] [owenparry-pb]
 description: Advanced grave protection system with Discord notifications and statistics
-website: https://github.com/BeboNaiem/GraveBox
+website: https://github.com/owenparry-pb/GraveBox forked from  https://github.com/BeboNaiem/GraveBox
 prefix: GraveBox
 
 # Plugin Commands
 commands:
+  gravetrack:
+    description: Track and manage your graves with a compass
+    usage: /gravetrack [stop]
+    aliases: [gt, track]
   gravestats:
     description: View your death statistics.
     usage: /gravestats
@@ -33,6 +37,9 @@ permissions:
   gravebox.bypass:
     description: Bypass grave protections (open/break any grave).
     default: op
+  gravebox.track:
+    description: Allows tracking graves with compass
+    default: true
 
 # Soft Dependencies
 softdepend: [Vault, PlaceholderAPI]
