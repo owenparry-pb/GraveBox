@@ -6,9 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class CompassListener implements Listener {
@@ -19,33 +17,20 @@ public class CompassListener implements Listener {
     }
 
     @EventHandler
-    public void onCompassInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && 
-            event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
-
-        ItemStack item = event.getItem();
-        if (item == null || item.getType() != Material.COMPASS) {
-            return;
-        }
-
+    public void onCompassUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (!plugin.getGraveTracker().isTracking(player)) {
-            return;
-        }
+        ItemStack item = event.getItem();
 
-        // Force update compass on right-click
-        GraveTracking tracking = plugin.getGraveTracker().getTrackedGrave(player);
-        if (tracking != null) {
-            plugin.getGraveTracker().updateTracking(player, tracking);
-            event.setCancelled(true);
+        if (item != null && item.getType() == Material.COMPASS) {
+            if (plugin.getGraveTracker().isTracking(player)) {
+                // Update compass target if already tracking
+                GraveTracking tracking = plugin.getGraveTracker().getTrackedGrave(player);
+                if (tracking != null) {
+                    plugin.getGraveTracker().updateTracking(player, tracking);
+                    player.setCompassTarget(tracking.getLocation());
+                    player.sendMessage(plugin.tl("messages.compass.updated"));
+                }
+            }
         }
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        // Clean up tracking when player leaves
-        plugin.getGraveTracker().stopTracking(event.getPlayer());
     }
 }
