@@ -6,7 +6,7 @@
 
     <groupId>me.bebo.graveBox</groupId>
     <artifactId>GraveBox</artifactId>
-    <version>2.1pp</version>
+    <version>2.2</version>
     <packaging>jar</packaging>
 
     <name>GraveBox</name>
