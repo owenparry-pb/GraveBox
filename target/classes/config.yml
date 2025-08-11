@@ -115,3 +115,13 @@ advanced:
     - "REPEATING_COMMAND_BLOCK"
     - "STRUCTURE_BLOCK"
     - "JIGSAW"
+  tracking:
+    enabled: true
+    auto-track: true
+    update-interval: 20
+    max-distance: 100
+    compass-slot: -1  # -1 for any slot, 0-8 for hotbar
+    display:
+      use-distance-bar: true
+      show-coordinates: true
+      show-direction: true

@@ -4,6 +4,12 @@ import me.bebo.graveBox.commands.GraveTrackCommand;
 import me.bebo.graveBox.listeners.CompassListener;
 import me.bebo.graveBox.tracking.GraveTracker;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.ChatColor;
+import java.io.File;
 
 public class GraveBox extends JavaPlugin {
     private GraveTracker graveTracker;
@@ -31,6 +37,14 @@ public class GraveBox extends JavaPlugin {
     public void onDisable() {
         if (graveTracker != null) {
             graveTracker.cleanup();
+        }
+    // Save any pending data
+        if (messages != null) {
+            try {
+                messages.save(new File(getDataFolder(), "messages.yml"));
+            } catch (IOException e) {
+                getLogger().warning("Failed to save messages.yml: " + e.getMessage());
+            }
         }
     }
 
