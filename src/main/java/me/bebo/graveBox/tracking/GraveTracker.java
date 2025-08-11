@@ -18,30 +18,29 @@ public class GraveTracker {
         this.graveRegistry = new HashMap<>();
     }
 
+    public boolean isTracking(Player player) {
+        return activeTracking.containsKey(player.getUniqueId());
+    }
+
+    public GraveTracking getTrackedGrave(Player player) {
+        return activeTracking.get(player.getUniqueId());
+    }
+
+    public void updateTracking(Player player, GraveTracking tracking) {
+        if (tracking != null) {
+            activeTracking.put(player.getUniqueId(), tracking);
+            player.setCompassTarget(tracking.getLocation());
+        }
+    }
+
+    public List<Location> getGraves(Player player) {
+        return playerGraves.getOrDefault(player.getUniqueId(), new ArrayList<>());
+    }
+
     public void registerGrave(UUID graveId, UUID playerId, String playerName, Location location) {
         GraveTracking tracking = new GraveTracking(graveId, playerId, playerName, location);
         graveRegistry.put(graveId, tracking);
-        addGrave(playerId, location);
-    }
-
-    public void addGrave(UUID playerId, Location location) {
         playerGraves.computeIfAbsent(playerId, k -> new ArrayList<>()).add(location);
-    }
-
-    public void addGrave(Player player, Location location) {
-        addGrave(player.getUniqueId(), location);
-    }
-
-    public void startTracking(Player player, GraveTracking tracking) {
-        activeTracking.put(player.getUniqueId(), tracking);
-    }
-
-    public void stopTracking(Player player) {
-        activeTracking.remove(player.getUniqueId());
-    }
-
-    public GraveTracking getActiveTracking(Player player) {
-        return activeTracking.get(player.getUniqueId());
     }
 
     public GraveTracking findLatestGrave(UUID playerId) {
@@ -56,6 +55,4 @@ public class GraveTracker {
         playerGraves.clear();
         graveRegistry.clear();
     }
-
-    // ... (keep existing methods)
 }

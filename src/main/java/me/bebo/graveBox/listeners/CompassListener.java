@@ -23,11 +23,9 @@ public class CompassListener implements Listener {
 
         if (item != null && item.getType() == Material.COMPASS) {
             if (plugin.getGraveTracker().isTracking(player)) {
-                // Update compass target if already tracking
                 GraveTracking tracking = plugin.getGraveTracker().getTrackedGrave(player);
                 if (tracking != null) {
                     plugin.getGraveTracker().updateTracking(player, tracking);
-                    player.setCompassTarget(tracking.getLocation());
                     player.sendMessage(plugin.tl("messages.compass.updated"));
                 }
             }
