@@ -1,0 +1,15 @@
+name: GraveBox
+version: '1.0.0'
+main: me.bebo.graveBox.GraveBox
+api-version: '1.20'
+author: bebo
+description: A comprehensive grave management system for Minecraft
+commands:
+  grave:
+    description: Opens the grave management interface
+    usage: /grave
+    permission: gravebox.use
+permissions:
+  gravebox.use:
+    description: Allows usage of the grave management system
+    default: true
