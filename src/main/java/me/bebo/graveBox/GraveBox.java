@@ -22,35 +22,59 @@ public class GraveBox extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Save default config
-        saveDefaultConfig();
-        
-        // Initialize tracking system
-        graveTracker = new GraveTracker(this);
-        
-        // Register commands
-        getCommand("gravetrack").setExecutor(new GraveTrackCommand(this));
-        
-        // Register listeners
-        getServer().getPluginManager().registerEvents(new CompassListener(this), this);
-        
-        // Load messages
-        loadMessages();
+        getLogger().info("GraveBox: onEnable started");
+
+        try {
+            // Save default config
+            getLogger().info("Saving default config...");
+            saveDefaultConfig();
+
+            // Initialize tracking system
+            getLogger().info("Initializing GraveTracker...");
+            graveTracker = new GraveTracker(this);
+
+            // Register commands
+            getLogger().info("Registering gravetrack command...");
+            if (getCommand("gravetrack") == null) {
+                getLogger().severe("Command 'gravetrack' not found in plugin.yml!");
+            } else {
+                getCommand("gravetrack").setExecutor(new GraveTrackCommand(this));
+            }
+
+            // Register listeners
+            getLogger().info("Registering listeners...");
+            getServer().getPluginManager().registerEvents(new CompassListener(this), this);
+
+            // Load messages
+            getLogger().info("Loading messages...");
+            loadMessages();
+
+            getLogger().info("GraveBox: onEnable completed successfully.");
+        } catch (Exception e) {
+            getLogger().severe("Error during onEnable: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onDisable() {
+        getLogger().info("GraveBox: onDisable started");
+
         if (graveTracker != null) {
+            getLogger().info("Cleaning up GraveTracker...");
             graveTracker.cleanup();
         }
-    // Save any pending data
+        // Save any pending data
         if (messages != null) {
             try {
+                getLogger().info("Saving messages.yml...");
                 messages.save(new File(getDataFolder(), "messages.yml"));
             } catch (IOException e) {
                 getLogger().warning("Failed to save messages.yml: " + e.getMessage());
             }
         }
+
+        getLogger().info("GraveBox: onDisable completed.");
     }
 
     public GraveTracker getGraveTracker() {
@@ -69,37 +93,43 @@ public class GraveBox extends JavaPlugin {
     }
 
     private void loadMessages() {
+        getLogger().info("Attempting to load messages.yml...");
         // Create messages.yml if it doesn't exist
         File messagesFile = new File(getDataFolder(), "messages.yml");
         if (!messagesFile.exists()) {
+            getLogger().info("messages.yml not found, saving default resource...");
             saveResource("messages.yml", false);
         }
 
         messages = YamlConfiguration.loadConfiguration(messagesFile);
+        getLogger().info("messages.yml loaded.");
     }
 
     // Update your existing onPlayerDeath method to include grave tracking
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        getLogger().info("PlayerDeathEvent triggered for player: " + event.getEntity().getName());
         Player player = event.getEntity();
         Location deathLocation = player.getLocation();
-        
+
         // Create a grave at or near the death location
         Location graveLocation = findSafeGraveLocation(deathLocation);
-        
+
         // After creating the grave, register it with the tracking system
         UUID graveId = UUID.randomUUID();
+        getLogger().info("Registering grave for player " + player.getName() + " at location: " + graveLocation);
         graveTracker.registerGrave(
             graveId,
             player.getUniqueId(),
             player.getName(),
             graveLocation
         );
-        
+
         // Automatically give them a tracking compass if enabled
         if (getConfig().getBoolean("grave.tracking.auto-track", true)) {
             GraveTracking tracking = graveTracker.findLatestGrave(player.getUniqueId());
             if (tracking != null) {
+                getLogger().info("Auto-tracking enabled: starting tracking for player " + player.getName());
                 graveTracker.startTracking(player, tracking);
             }
         }
