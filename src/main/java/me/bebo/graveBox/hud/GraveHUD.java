@@ -38,18 +38,6 @@ public class GraveHUD {
     }
 
     public boolean toggleHUD(Player player) {
-        boolean isEnabled;
-        if (hudEnabled.contains(player.getUniqueId())) {
-            hudEnabled.remove(player.getUniqueId());
-            isEnabled = false;
-        } else {
-            hudEnabled.add(player.getUniqueId());
-            isEnabled = true;
-        }
-        return isEnabled;
-    }
-	
-	public void toggleHUD(Player player) {
         if (playerBars.containsKey(player.getUniqueId())) {
             // Remove HUD
             BossBar bar = playerBars.get(player.getUniqueId());
@@ -57,6 +45,7 @@ public class GraveHUD {
             bar.setVisible(false);
             playerBars.remove(player.getUniqueId());
             player.sendMessage("§cGrave HUD disabled!");
+            return false;
         } else {
             // Create new HUD
             BossBar bar = Bukkit.createBossBar(
@@ -68,6 +57,7 @@ public class GraveHUD {
             bar.setVisible(true);
             playerBars.put(player.getUniqueId(), bar);
             player.sendMessage("§aGrave HUD enabled!");
+            return true;
         }
     }
 
