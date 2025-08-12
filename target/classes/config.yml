@@ -115,3 +115,19 @@ advanced:
     - "REPEATING_COMMAND_BLOCK"
     - "STRUCTURE_BLOCK"
     - "JIGSAW"
+hud:
+  enabled: true
+  update-interval: 10  # ticks (20 ticks = 1 second)
+  max-tracking-distance: 500  # blocks
+  display-format: "§e{direction} §7{distance}m §8({compass})"
+  bar-color: WHITE  # WHITE, BLUE, GREEN, PINK, PURPLE, RED, YELLOW
+  bar-style: SOLID  # SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+  direction-arrows:
+    NORTH: "⬆"
+    NORTH_EAST: "⬈"
+    EAST: "➡"
+    SOUTH_EAST: "⬊"
+    SOUTH: "⬇"
+    SOUTH_WEST: "⬋"
+    WEST: "⬅"
+    NORTH_WEST: "⬉"
