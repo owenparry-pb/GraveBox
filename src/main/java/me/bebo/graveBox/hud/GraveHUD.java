@@ -82,62 +82,53 @@ public class GraveHUD {
         BossBar bar = playerBars.get(player.getUniqueId());
         if (bar == null) return;
 
-        // Get all graves for this player
-        boolean hasGraves = false;
-        boolean hasGravesInOtherWorlds = false;
-        String playerWorld = player.getWorld().getName();
-        
-        for (Grave grave : plugin.getGraveLocations().values()) {
-            if (grave.getOwnerId().equals(player.getUniqueId())) {
-                hasGraves = true;
-                if (!grave.getLocation().getWorld().getName().equals(playerWorld)) {
-                    hasGravesInOtherWorlds = true;
-                }
+        try {
+            Grave nearestGrave = plugin.getNearestGrave(player);
+            
+            if (nearestGrave == null) {
+                bar.setTitle("§cNo graves found in this dimension");
+                bar.setProgress(0.0);
+                return;
             }
+
+            Location playerLoc = player.getLocation();
+            Location graveLoc = nearestGrave.getLocation();
+            
+            // Skip if in different worlds
+            if (!playerLoc.getWorld().getName().equals(graveLoc.getWorld().getName())) {
+                bar.setTitle("§eGrave found in " + graveLoc.getWorld().getName());
+                bar.setProgress(0.0);
+                return;
+            }
+            
+            // Calculate distance and direction
+            int distance = (int) playerLoc.distance(graveLoc);
+            if (distance > maxDistance) {
+                bar.setTitle("§cGrave too far away (" + distance + "m)");
+                bar.setProgress(0.0);
+                return;
+            }
+
+            String direction = getDirection(playerLoc, graveLoc);
+            String compass = getCompassDirection(playerLoc.getYaw());
+            
+            // Format message
+            String message = displayFormat
+                .replace("{direction}", directionArrows.get(direction))
+                .replace("{distance}", String.valueOf(distance))
+                .replace("{compass}", compass);
+
+            bar.setTitle(message);
+            
+            // Update progress bar based on distance
+            double progress = 1.0 - (Math.min(distance, maxDistance) / (double) maxDistance);
+            bar.setProgress(Math.max(0.0, Math.min(1.0, progress)));
+            
+        } catch (IllegalArgumentException e) {
+            // Handle cross-dimension distance calculation errors
+            bar.setTitle("§eGrave found in another dimension");
+            bar.setProgress(0.0);
         }
-
-        Grave nearestGrave = plugin.getNearestGrave(player);
-        
-        if (!hasGraves) {
-            bar.setTitle("§cNo graves found");
-            bar.setProgress(0.0);
-            return;
-        } else if (nearestGrave == null && hasGravesInOtherWorlds) {
-            // There are graves, but in different dimensions
-            bar.setTitle("§eGraves found in other dimensions");
-            bar.setProgress(0.0);
-            return;
-        } else if (nearestGrave == null) {
-            bar.setTitle("§cNo graves found in this dimension");
-            bar.setProgress(0.0);
-            return;
-        }
-
-        Location playerLoc = player.getLocation();
-        Location graveLoc = nearestGrave.getLocation();
-        
-        // Calculate distance and direction
-        int distance = (int) playerLoc.distance(graveLoc);
-        if (distance > maxDistance) {
-            bar.setTitle("§cGrave too far away (" + distance + "m)");
-            bar.setProgress(0.0);
-            return;
-        }
-
-        String direction = getDirection(playerLoc, graveLoc);
-        String compass = getCompassDirection(playerLoc.getYaw());
-        
-        // Format message
-        String message = displayFormat
-            .replace("{direction}", directionArrows.get(direction))
-            .replace("{distance}", String.valueOf(distance))
-            .replace("{compass}", compass);
-
-        bar.setTitle(message);
-        
-        // Update progress bar based on distance
-        double progress = 1.0 - (Math.min(distance, maxDistance) / (double) maxDistance);
-        bar.setProgress(Math.max(0.0, Math.min(1.0, progress)));
     }
 
     public void removeHUDForGrave(UUID playerId) {
