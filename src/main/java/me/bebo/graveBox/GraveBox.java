@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import me.bebo.graveBox.hud.GraveHUD;
+import me.bebo.graveBox.hud.GraveHUDCommand;
 
 public final class GraveBox extends JavaPlugin implements Listener {
 
@@ -485,12 +486,6 @@ public final class GraveBox extends JavaPlugin implements Listener {
                 ============================================================================
                 """.formatted(getDescription().getVersion());
         Bukkit.getConsoleSender().sendMessage(ChatColor.GOLD + banner);
-    }
-
-    private record Grave(UUID id, UUID ownerId, Location location) {
-        public UUID getId() { return id; }
-        public UUID getOwnerId() { return ownerId; }
-        public Location getLocation() { return location; }
     }
 
     private Location findSafeLocation(Location center, int radius) {
