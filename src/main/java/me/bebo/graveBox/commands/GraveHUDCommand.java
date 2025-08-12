@@ -1,6 +1,7 @@
 package me.bebo.graveBox.commands;
 
 import me.bebo.graveBox.GraveBox;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,14 +17,18 @@ public class GraveHUDCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("This command can only be used by players!");
+            sender.sendMessage(ChatColor.RED + "This command can only be used by players!");
             return true;
         }
 
         Player player = (Player) sender;
-        // TODO: Add your command logic here
-        // For example:
-        // plugin.getGraveHUD().toggleHUD(player);
+        boolean isEnabled = plugin.getGraveHUD().toggleHUD(player);
+        
+        // Add feedback message
+        player.sendMessage(ChatColor.GOLD + "Grave HUD has been " + 
+            (isEnabled ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + 
+            ChatColor.GOLD + "!");
+
         return true;
     }
 }
