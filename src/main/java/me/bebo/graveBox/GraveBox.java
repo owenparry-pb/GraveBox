@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import me.bebo.graveBox.hud.GraveHUD;
-import me.bebo.graveBox.hud.GraveHUDCommand;
+import me.bebo.graveBox.commands.GraveHUDCommand;
 
 public final class GraveBox extends JavaPlugin implements Listener {
 

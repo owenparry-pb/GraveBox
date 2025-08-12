@@ -15,17 +15,15 @@ public class GraveHUDCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cThis command can only be used by players!");
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("This command can only be used by players!");
             return true;
         }
 
-        if (!player.hasPermission("gravebox.hud")) {
-            player.sendMessage("§cYou don't have permission to use the grave HUD!");
-            return true;
-        }
-
-        plugin.getGraveHUD().toggleHUD(player);
+        Player player = (Player) sender;
+        // TODO: Add your command logic here
+        // For example:
+        // plugin.getGraveHUD().toggleHUD(player);
         return true;
     }
 }
