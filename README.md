@@ -1,4 +1,4 @@
-# 🪦 GraveBox v2.0
+# 🪦 GraveBox v2.1.2
 
 GraveBox is a robust Minecraft plugin designed to enhance player experience by preventing item loss upon death. Instead of dropping items when players die, GraveBox automatically creates a special container (grave) at the death location that securely stores all inventory items.
 
@@ -15,6 +15,7 @@ GraveBox is a robust Minecraft plugin designed to enhance player experience by p
 - **🧹 Smart Grave Management:** Automatically removes empty graves to prevent clutter
 - **📂 File-based Storage:** Each grave's contents are saved to individual YML files
 - **🔍 Virtual Inventory Mode:** Uses virtual inventories for grave contents
+- **🧭 Grave HUD system for locating graves** (Added by [@owenparry-pb](https://github.com/owenparry-pb) - 2025-08-12)
 
 ### 🛡️ Enhanced Protection Systems
 - **💥 Explosion Protection:** Graves survive TNT, creepers, and other explosions
@@ -39,6 +40,38 @@ GraveBox is a robust Minecraft plugin designed to enhance player experience by p
 - **🔧 Flexible Material Choices:** Any container block type
 - **📤 Item Overflow Handling:** Drops excess items when grave is full
 - **⚙️ Blacklist System:** Prevent specific items from being stored
+
+- ### New HUD Feature 🧭
+
+The Grave HUD feature (added 2025-08-12 21:23:57) helps players locate their graves using a boss bar display that shows:
+- 🎯 Directions to the nearest grave using arrows
+- 📏 Distance in meters
+- 🧭 Compass direction
+- 📊 Progress bar that decreases as you get further from the grave
+
+The HUD updates in real-time and works across all worlds, showing appropriate messages when graves are in different dimensions:
+- ❌ "No graves found" - When you have no graves
+- 🌐 "Graves found in other dimensions" - When your graves are in a different dimension
+- 🚫 "No graves found in this dimension" - When no graves are in your current dimension
+- 📍 "Grave too far away (Xm)" - When the grave is beyond tracking distance
+
+### Compass Direction Guide 🧭
+```
+             N (⬆)
+    NW (⬉)   |   NE (⬈)
+              |
+W (⬅) -------|-------- E (➡)
+              |
+    SW (⬋)   |   SE (⬊)
+             S (⬇)
+```
+
+### Using the HUD
+
+1. Type `/gravehud` to toggle the HUD on/off
+2. The boss bar will show the direction and distance to your nearest grave
+3. The progress bar indicates relative distance (fuller = closer)
+4. Different messages appear when graves are in other dimensions
 
 ## 📥 Installation Guide
 
@@ -102,6 +135,23 @@ advanced:
     - "REPEATING_COMMAND_BLOCK"
     - "STRUCTURE_BLOCK"
     - "JIGSAW"
+hud:
+  # Update interval in ticks (20 ticks = 1 second)
+  update-interval: 10
+  # Maximum distance to track graves (in blocks)
+  max-tracking-distance: 500
+  # HUD display format
+  display-format: "§e{direction} §7{distance}m §8({compass})"
+  # Direction arrows for the HUD
+  direction-arrows:
+    NORTH: "⬆"      # ↑
+    NORTH_EAST: "⬈"  # ↗
+    EAST: "➡"       # →
+    SOUTH_EAST: "⬊"  # ↘
+    SOUTH: "⬇"      # ↓
+    SOUTH_WEST: "⬋"  # ↙
+    WEST: "⬅"       # ←
+    NORTH_WEST: "⬉"  # ↖
 ```
 
 ## 🔑 Permission Nodes
@@ -117,10 +167,11 @@ advanced:
 
 ### 👨‍💻 Player Commands
 - `/gravestats` - View your death count (aliases: deathstats, deaths)
+- `/gravehud` - Toggle the grave location HUD 🧭
 
 ### 👨‍💼 Admin Commands
 - `/graveadmin` - Admin commands for GraveBox (reload|stats)
-
+  
 ## 🛠️ Technical Specifications
 
 ### 📦 Dependencies:
@@ -172,7 +223,7 @@ Report issues on GitHub. Contributions welcome via pull requests!
 MIT License - Free for use and modification
 
 ## 📌 Version Information
-- Current Version: 2.0
+- Current Version: 2.1.2
 - Minecraft Version: 1.17
 - API Version: Paper 1.21-R0.1-SNAPSHOT
 - Java Version: 17+
