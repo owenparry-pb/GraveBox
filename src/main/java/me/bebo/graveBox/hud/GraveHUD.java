@@ -37,7 +37,19 @@ public class GraveHUD {
         startUpdateTask();
     }
 
-    public void toggleHUD(Player player) {
+    public boolean toggleHUD(Player player) {
+        boolean isEnabled;
+        if (hudEnabled.contains(player.getUniqueId())) {
+            hudEnabled.remove(player.getUniqueId());
+            isEnabled = false;
+        } else {
+            hudEnabled.add(player.getUniqueId());
+            isEnabled = true;
+        }
+        return isEnabled;
+    }
+	
+	public void toggleHUD(Player player) {
         if (playerBars.containsKey(player.getUniqueId())) {
             // Remove HUD
             BossBar bar = playerBars.get(player.getUniqueId());
