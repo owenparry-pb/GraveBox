@@ -57,6 +57,11 @@ public final class GraveBox extends JavaPlugin implements Listener {
     private boolean indestructible;
     private boolean autoRemove;
     private boolean dropItemsOnDestroy;
+	private GraveHUD graveHUD;
+
+    public GraveHUD getGraveHUD() {
+        return graveHUD;
+    }
 
     @Override
     public void onEnable() {
@@ -68,6 +73,9 @@ public final class GraveBox extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         getCommand("gravestats").setExecutor(this);
 
+        graveHUD = new GraveHUD(this);
+        getCommand("gravehud").setExecutor(new GraveHUDCommand(this));
+
         printBanner();
         getLogger().info("GraveBox v" + getDescription().getVersion() + " (Virtual Inventory Mode) has been enabled!");
     }
@@ -78,8 +86,11 @@ public final class GraveBox extends JavaPlugin implements Listener {
             Player player = Bukkit.getPlayer(entry.getKey());
             if (player != null && player.getOpenInventory().getTopInventory() != null) {
                 saveGrave(entry.getValue(), player.getOpenInventory().getTopInventory());
-            }
-        }
+			}
+		}
+        if (graveHUD != null) {
+                graveHUD.disable();
+		}
         closeDatabase();
         getLogger().info("GraveBox has been disabled!");
     }
@@ -230,6 +241,9 @@ public final class GraveBox extends JavaPlugin implements Listener {
         Inventory inv = event.getInventory();
         if (autoRemove && isInventoryEmpty(inv)) {
             deleteGrave(grave);
+			if (graveHUD != null) {
+                graveHUD.removeHUDForGrave(player.getUniqueId());
+            }
             player.sendMessage(tl("messages.grave-emptied"));
         } else {
             saveGrave(grave, inv);
@@ -261,6 +275,10 @@ public final class GraveBox extends JavaPlugin implements Listener {
                 event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);
             }
         }
+		// Add HUD cleanup here
+        if (graveHUD != null) {
+            graveHUD.removeHUDForGrave(grave.getOwnerId());
+        }
 
         // Delete the grave data file and remove the block from the world.
         deleteGrave(grave);
@@ -288,6 +306,23 @@ public final class GraveBox extends JavaPlugin implements Listener {
         saveGraveToFile(grave, items);
     }
 
+    public Grave getNearestGrave(Player player) {
+        Grave nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
+    
+        for (Grave grave : graveLocations.values()) {
+            if (!grave.getOwnerId().equals(player.getUniqueId())) continue;
+        
+            double distance = player.getLocation().distance(grave.getLocation());
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = grave;
+            }
+        }
+    
+        return nearest;
+    }
+	
     private void saveGraveToFile(Grave grave, List<ItemStack> items) {
         File graveFile = new File(gravesFolder, grave.getId().toString() + ".yml");
         FileConfiguration graveConfig = new YamlConfiguration();
@@ -323,6 +358,10 @@ public final class GraveBox extends JavaPlugin implements Listener {
         graveLocations.remove(grave.getLocation());
         if (grave.getLocation().getBlock().getType() == graveMaterial) {
             grave.getLocation().getBlock().setType(Material.AIR);
+        }
+		// Add HUD cleanup here
+        if (graveHUD != null) {
+            graveHUD.removeHUDForGrave(grave.getOwnerId());
         }
         File graveFile = new File(gravesFolder, grave.getId().toString() + ".yml");
         if (graveFile.exists()) {
@@ -441,13 +480,6 @@ public final class GraveBox extends JavaPlugin implements Listener {
 
     private void printBanner() {
         String banner = """
-
-                ██████╗ ███████╗██████╗  ██████╗      ██████╗ ██████╗ ██████╗ ███████╗\s
-                ██╔══██╗██╔════╝██╔══██╗██╔═══██╗    ██╔════╝██╔═══██╗██╔══██╗██╔════╝\s
-                ██████╔╝█████╗  ██████╔╝██║   ██║    ██║     ██║   ██║██║  ██║█████╗  \s
-                ██╔══██╗██╔══╝  ██╔══██╗██║   ██║    ██║     ██║   ██║██║  ██║██╔══╝  \s
-                ██████╔╝███████╗██████╔╝╚██████╔╝    ╚██████╗╚██████╔╝██████╔╝███████╗
-                ╚═════╝ ╚══════╝╚═════╝  ╚═════╝      ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝
                                GraveBox v%s - Complete Item Protection
                 ============================================================================
                 """.formatted(getDescription().getVersion());
