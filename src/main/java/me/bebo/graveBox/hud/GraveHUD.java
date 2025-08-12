@@ -82,9 +82,33 @@ public class GraveHUD {
         BossBar bar = playerBars.get(player.getUniqueId());
         if (bar == null) return;
 
+        // Get all graves for this player
+        boolean hasGraves = false;
+        boolean hasGravesInOtherWorlds = false;
+        String playerWorld = player.getWorld().getName();
+        
+        for (Grave grave : plugin.getGraveLocations().values()) {
+            if (grave.getOwnerId().equals(player.getUniqueId())) {
+                hasGraves = true;
+                if (!grave.getLocation().getWorld().getName().equals(playerWorld)) {
+                    hasGravesInOtherWorlds = true;
+                }
+            }
+        }
+
         Grave nearestGrave = plugin.getNearestGrave(player);
-        if (nearestGrave == null) {
+        
+        if (!hasGraves) {
             bar.setTitle("§cNo graves found");
+            bar.setProgress(0.0);
+            return;
+        } else if (nearestGrave == null && hasGravesInOtherWorlds) {
+            // There are graves, but in different dimensions
+            bar.setTitle("§eGraves found in other dimensions");
+            bar.setProgress(0.0);
+            return;
+        } else if (nearestGrave == null) {
+            bar.setTitle("§cNo graves found in this dimension");
             bar.setProgress(0.0);
             return;
         }
@@ -95,7 +119,7 @@ public class GraveHUD {
         // Calculate distance and direction
         int distance = (int) playerLoc.distance(graveLoc);
         if (distance > maxDistance) {
-            bar.setTitle("§cGrave too far away");
+            bar.setTitle("§cGrave too far away (" + distance + "m)");
             bar.setProgress(0.0);
             return;
         }

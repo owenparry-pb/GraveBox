@@ -311,11 +311,17 @@ public final class GraveBox extends JavaPlugin implements Listener {
     public Grave getNearestGrave(Player player) {
         Grave nearest = null;
         double nearestDistance = Double.MAX_VALUE;
+        Location playerLoc = player.getLocation();
+        String playerWorld = playerLoc.getWorld().getName();
     
         for (Grave grave : graveLocations.values()) {
             if (!grave.getOwnerId().equals(player.getUniqueId())) continue;
+            
+            Location graveLoc = grave.getLocation();
+            // Skip graves in different worlds
+            if (!graveLoc.getWorld().getName().equals(playerWorld)) continue;
         
-            double distance = player.getLocation().distance(grave.getLocation());
+            double distance = playerLoc.distance(graveLoc);
             if (distance < nearestDistance) {
                 nearestDistance = distance;
                 nearest = grave;
